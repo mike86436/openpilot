@@ -81,6 +81,7 @@ class HondaFlags(IntFlag):
   HYBRID = 2048
   BOSCH_TJA_CONTROL = 4096
   EPS_MODIFIED = 8192
+  HYBRID_ALT_BRAKEHOLD = 16384  # some Nidec hybrids report brake hold via BRAKE_HOLD_HYBRID_ALT instead of VSA_STATUS
 
 
 # Car button codes
@@ -379,7 +380,7 @@ class CAR(Platforms):
     [HondaCarDocs("Honda Clarity 2018-21", "All", min_steer_speed=3. * CV.MPH_TO_MS)],
     CarSpecs(mass=1838, wheelbase=2.75, centerToFrontRatio=0.4, steerRatio=16.5),
     radar_dbc_dict('honda_clarity_hybrid_2018_can_generated'),
-    flags=HondaFlags.HAS_ALL_DOOR_STATES,
+    flags=HondaFlags.HAS_ALL_DOOR_STATES | HondaFlags.HYBRID,
   )
   HONDA_ODYSSEY = HondaNidecPlatformConfig(
     [HondaCarDocs("Honda Odyssey 2018-20")],
