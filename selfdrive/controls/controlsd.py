@@ -696,7 +696,7 @@ class Controls:
     )
 
     hudControl = CC.hudControl
-    hud_set_speed = float(CS.vCruiseCluster * CV.KPH_TO_MS)
+    hud_set_speed = float(self.sm['starpilotPlan'].vCruise)
     gm_dash_spoof_offsets_enabled = (
       self.CP.brand == "gm" and
       self.CP.openpilotLongitudinalControl and
