@@ -413,7 +413,7 @@ class CarController(CarControllerBase):
           self.apply_brake_last = apply_brake
           self.brake = apply_brake / self.params.NIDEC_BRAKE_MAX
 
-          if self.CP.enableGasInterceptorDEPRECATED:
+          if self.CP.enableGasInterceptorDEPRECATED and self.CP.carFingerprint in HONDA_BOSCH:
             gas_error = actuators.accel - CS.out.aEgo
 
             if not CS.out.gasPressed and actuators.longControlState == LongCtrlState.pid:
