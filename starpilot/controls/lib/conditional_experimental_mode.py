@@ -447,7 +447,7 @@ class ConditionalExperimentalMode:
       self.lead_clear_filter.update_alpha(lead_clear_filter_time)
 
       # Disable stoplight detection at very high speeds to prevent false positives
-      if speed_mph > 75:  # Disable above 75 mph
+      if speed_mph > 49:  # Disable above 49 mph
         self.reset_stop_light_state()
         return
 
