@@ -155,7 +155,7 @@ class StarPilotVCruise:
     self.csc_target = 0.0
     self.csc_curve_last_seen_at = None
 
-    self.braking_target = 0.0
+    self.dynamic_vLead = 0.0
 
   def _update_nav_instruction_state(self):
     raw = self.starpilot_planner.params_memory.get("NavInstructionState") or {}
@@ -450,16 +450,19 @@ class StarPilotVCruise:
 
         self.csc_target = v_cruise
 
-    # extended lead linear braking & better tracking behind lead
-    self.braking_target = v_cruise
+    # dynamic_vLead for better tracking behind lead
+    self.dynamic_vLead = v_cruise
     if v_ego > CRUISING_SPEED and self.starpilot_planner.tracking_lead:
+      t_predict = 2.0
+      max_speed_reduction = 5.0  # m/s (~11 mph)
       lead = self.starpilot_planner.lead_one
       tFollow = self.starpilot_planner.starpilot_following.t_follow
-      dFollow = max(lead.dRel - lead.vLead * (tFollow + 0.25), 1e-6)
-      if (lead.vLead + dFollow / v_ego) < v_ego and 1 < lead.dRel < 125:
-        decelRate = (lead.vRel ** 2) / (2 * dFollow) * 2
-        brake_speed = v_ego - (decelRate - lead.aLeadK)
-        self.braking_target = float(max(CRUISING_SPEED, brake_speed, lead.vLead))
+      dFollow = max(lead.dRel - lead.vLead * (tFollow + 0.25), 1)
+      if 1 < lead.dRel < 125:
+        required_decel = max((lead.vRel ** 2) / (2 * dFollow) - lead.aLeadK, 0)
+        speed_reduction = np.clip(required_decel * t_predict, 0, max_speed_reduction)
+        target_speed = v_ego - speed_reduction
+        self.dynamic_vLead = float(max(CRUISING_SPEED, target_speed, lead.vLead))
 
     # Pfeiferj's Speed Limit Controller
     self.slc.starpilot_toggles = starpilot_toggles
@@ -526,7 +529,7 @@ class StarPilotVCruise:
 
       self.tracked_model_length = self.starpilot_planner.model_length
 
-      targets = [self.braking_target, v_cruise]
+      targets = [self.dynamic_vLead, v_cruise]
       if self.csc_target >= CSC_MIN_SPEED:
         targets.append(self.csc_target)
       slc_control_target = get_active_slc_control_target(
