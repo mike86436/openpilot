@@ -433,7 +433,7 @@ class CarController(CarControllerBase):
             gas_mult = float(np.interp(CS.out.vEgo, [0.0, 10.0], [0.4, 1.0]))
             if CC.longActive:
               gas_interceptor_command = float(np.clip(
-                gas_mult * ((gas * self.bosch_gas_factor) - brake + (wind_brake * self.bosch_wind_factor * 3.0 / 4.0)),
+                gas_mult * (gas - brake + (wind_brake * 3.0 / 4.0)),
                 0.0,
                 1.0,
               ))
