@@ -207,7 +207,7 @@ class CarInterface(CarInterfaceBase):
             ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 0xA00, 0x3C00], [0, 2560, 3840]]
             ret.lateralTuning.pid.kpV, ret.lateralTuning.pid.kiV = [[0.1575], [0.05175]]
           elif fw.ecu == "eps" and b"-" in fw.fwVersion and b"," in fw.fwVersion:
-            ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 0xA00, 0x2800], [0, 2560, 3840]]
+            ret.lateralParams.torqueBP, ret.lateralParams.torqueV = [[0, 2560], [0, 2560]]
             _low_max = 25. * CV.MPH_TO_MS
             _bp = [0., _low_max - 1e-3, _low_max, 50. * CV.MPH_TO_MS]
             ret.lateralTuning.pid.kpBP, ret.lateralTuning.pid.kpV = [_bp, [0.018, 0.024, 0.048, 0.060]]
